@@ -10,11 +10,41 @@ import 'package:flutter/widgets.dart';
 /// detection when the field appears "empty" to the user. The space character
 /// is always preserved at the beginning of the text.
 ///
-/// Behavior:
+/// ## When to Use
+///
+/// This controller is **optional**. You can use either:
+/// 1. This specialized controller: `PinCodeTextEditingController()`
+/// 2. A regular controller: `TextEditingController(text: " ")`
+///
+/// Both work identically, as the [BackspaceDetectorFormatter] handles most
+/// of the logic. This controller just provides convenience and extra safety.
+///
+/// ## Behavior
+///
 /// - Initializes with a single space character by default
 /// - Prevents the leading space from being deleted
 /// - Handles rapid input edge cases where the space might be replaced
+///
+/// ## Example
+///
+/// ```dart
+/// // Option 1: Use this specialized controller
+/// final controller1 = PinCodeTextEditingController();
+///
+/// // Option 2: Use regular controller with space
+/// final controller2 = TextEditingController(text: " ");
+///
+/// // Both work the same in PinCodeTextField
+/// PinCodeTextField(
+///   controller: controller1, // or controller2
+///   onBackspacePressedOnEmptyField: () { ... },
+/// )
+/// ```
 class PinCodeTextEditingController extends TextEditingController {
+  /// Creates a PIN code text editing controller.
+  ///
+  /// If [text] is provided, it will be used as the initial text. Otherwise,
+  /// the controller initializes with a single space character.
   PinCodeTextEditingController({String? text}) : super(text: text ?? " ");
 
   @override

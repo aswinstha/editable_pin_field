@@ -2,6 +2,31 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Architecture Overview:
+//
+// This file implements PinCodeTextField using composition instead of copying
+// Flutter's TextField source code. The implementation consists of:
+//
+// 1. PinCodeTextField (StatefulWidget)
+//    - Thin wrapper around Flutter's standard TextField
+//    - Manages optional PinCodeTextEditingController lifecycle
+//    - Adds BackspaceDetectorFormatter to the formatter chain
+//    - Forwards all other TextField parameters unchanged
+//
+// 2. BackspaceDetectorFormatter (TextInputFormatter)
+//    - Maintains leading space character in each field
+//    - Detects backspace on "empty" (space-only) fields
+//    - Handles rapid input edge cases
+//    - Triggers onBackspacePressedOnEmptyField callback
+//
+// 3. PinCodeTextEditingController (optional)
+//    - Convenience controller that initializes with a space
+//    - Provides extra safety for maintaining space character
+//    - Can be replaced with regular TextEditingController(text: " ")
+//
+// This design allows ~30 lines of custom logic instead of maintaining
+// 2,788 lines of copied Flutter source code.
+
 import 'package:editable_pin_field/backspace_detector_formatter.dart';
 import 'package:editable_pin_field/pin_code_text_editing_controller.dart';
 import 'package:flutter/gestures.dart';
@@ -107,6 +132,15 @@ class PinCodeTextField extends StatefulWidget {
   /// Controls the text being edited.
   ///
   /// If null, this widget will create its own [PinCodeTextEditingController].
+  ///
+  /// You can use either [PinCodeTextEditingController] or a regular
+  /// [TextEditingController] initialized with a space:
+  /// ```dart
+  /// TextEditingController(text: " ")
+  /// ```
+  ///
+  /// Both work identically since [BackspaceDetectorFormatter] handles the
+  /// space character maintenance logic.
   final TextEditingController? controller;
 
   /// Defines the keyboard focus for this widget.
@@ -232,9 +266,18 @@ class PinCodeTextField extends StatefulWidget {
   State<PinCodeTextField> createState() => _PinCodeTextFieldState();
 }
 
+/// State for [PinCodeTextField].
+///
+/// Manages the lifecycle of the internal [TextEditingController] when one
+/// is not provided by the user. This follows Flutter's standard pattern for
+/// widgets with optional controllers (similar to TextField, TextFormField, etc).
 class _PinCodeTextFieldState extends State<PinCodeTextField> {
+  /// Internal controller created when [widget.controller] is null.
+  ///
+  /// This is null when the user provides their own controller.
   TextEditingController? _controller;
 
+  /// Returns the controller to use - either user-provided or internal.
   TextEditingController get _effectiveController =>
       widget.controller ?? _controller!;
 
@@ -270,7 +313,10 @@ class _PinCodeTextFieldState extends State<PinCodeTextField> {
 
   @override
   Widget build(BuildContext context) {
-    // Combine user-provided formatters with our backspace detector
+    // Combine user-provided formatters with our backspace detector.
+    // IMPORTANT: BackspaceDetectorFormatter must come FIRST to ensure it
+    // processes input before any user-provided formatters. This guarantees
+    // the space character is maintained and backspace detection works correctly.
     final formatters = <TextInputFormatter>[
       BackspaceDetectorFormatter(
         onBackspaceOnEmpty: widget.onBackspacePressedOnEmptyField,
@@ -315,6 +361,9 @@ class _PinCodeTextFieldState extends State<PinCodeTextField> {
       onTap: widget.onTap,
       scrollController: widget.scrollController,
       scrollPhysics: widget.scrollPhysics,
+      // Transform buildCounter to match TextField's signature.
+      // TextField expects maxLength as int?, but InputCounterWidgetBuilder
+      // expects int. We wrap it to handle the null case.
       buildCounter: widget.buildCounter == null
           ? null
           : (
