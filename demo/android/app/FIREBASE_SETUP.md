@@ -20,18 +20,34 @@ demo/android/app/google-services.json
 5. Download the `google-services.json` file
 6. Place it in `demo/android/app/google-services.json`
 
-## Firebase Test Lab Usage
+## Firebase Test Lab Usage with Flutter Integration Tests
 
-Once you've added the configuration file, you can build and run tests on Firebase Test Lab:
+Once you've added the configuration file, you can build and run Flutter integration tests on Firebase Test Lab:
 
-### Build the APKs
+### 1. Install Dependencies
 ```bash
 cd demo
-flutter build apk
-flutter build apk --debug  # For instrumentation tests
+flutter pub get
 ```
 
-### Run on Firebase Test Lab
+### 2. Run Tests Locally (Optional)
+```bash
+flutter test integration_test/app_test.dart
+```
+
+### 3. Build APKs for Firebase Test Lab
+```bash
+# Build the app APK
+flutter build apk
+
+# Build the instrumentation test APK
+pushd android
+./gradlew app:assembleAndroidTest
+./gradlew app:assembleDebug -Ptarget=$(pwd)/../integration_test/app_test.dart
+popd
+```
+
+### 4. Run on Firebase Test Lab
 ```bash
 gcloud firebase test android run \
   --type instrumentation \
@@ -40,22 +56,18 @@ gcloud firebase test android run \
   --device model=Pixel2,version=28,locale=en,orientation=portrait
 ```
 
-## Instrumentation Tests
+## Flutter Integration Tests
 
-The basic instrumentation test is located at:
+The Flutter integration tests are located at:
 ```
-demo/android/app/src/androidTest/java/com/example/demo/MainActivityTest.java
+demo/integration_test/app_test.dart
 ```
 
-This test verifies:
-- App launches successfully
-- Main button is displayed
+These tests verify:
+- App launches successfully and displays main button
 - Navigation to PIN editor works
+- PIN editor displays 6 input fields
+- Can input values in PIN fields
+- Can navigate back from PIN editor
 
-You can run the tests locally with:
-```bash
-cd demo
-flutter drive --target=test_driver/app.dart
-```
-
-Or build the test APK and run on Firebase Test Lab as shown above.
+All tests use Flutter's `integration_test` package and run the actual Flutter app, providing comprehensive end-to-end testing.
