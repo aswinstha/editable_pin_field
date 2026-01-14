@@ -117,24 +117,18 @@ class _DemoPinCodeEditorState extends State<DemoPinCodeEditor> {
     switch (index) {
       case 0:
         return t1;
-        break;
       case 1:
         return t2;
-        break;
       case 2:
         return t3;
-        break;
       case 3:
         return t4;
-        break;
       case 4:
         return t5;
-        break;
       case 5:
         return t6;
-        break;
       default:
-        return null;
+        throw ArgumentError('Invalid index: $index');
     }
   }
 
@@ -142,24 +136,18 @@ class _DemoPinCodeEditorState extends State<DemoPinCodeEditor> {
     switch (index) {
       case 0:
         return f1;
-        break;
       case 1:
         return f2;
-        break;
       case 2:
         return f3;
-        break;
       case 3:
         return f4;
-        break;
       case 4:
         return f5;
-        break;
       case 5:
         return f6;
-        break;
       default:
-        return null;
+        throw ArgumentError('Invalid index: $index');
     }
   }
 }

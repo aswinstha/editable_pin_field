@@ -34,7 +34,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 export 'package:flutter/services.dart'
-    show TextInputType, TextInputAction, TextCapitalization;
+    show TextInputType, TextInputAction, TextCapitalization, MaxLengthEnforcement;
 
 /// Signature for the [PinCodeTextField.buildCounter] callback.
 typedef InputCounterWidgetBuilder = Widget Function(
@@ -109,7 +109,7 @@ class PinCodeTextField extends StatefulWidget {
     this.minLines,
     this.expands = false,
     this.maxLength,
-    this.maxLengthEnforced = true,
+    this.maxLengthEnforcement,
     this.onChanged,
     this.onEditingComplete,
     this.onSubmitted,
@@ -201,8 +201,14 @@ class PinCodeTextField extends StatefulWidget {
   /// The maximum number of characters to allow in the text field.
   final int? maxLength;
 
-  /// Whether to enforce the maximum length with a [LengthLimitingTextInputFormatter].
-  final bool maxLengthEnforced;
+  /// Determines how the [maxLength] limit should be enforced.
+  ///
+  /// If null, defaults to [MaxLengthEnforcement.enforced].
+  ///
+  /// See also:
+  ///  * [MaxLengthEnforcement], which discusses the various ways to enforce
+  ///    maximum length.
+  final MaxLengthEnforcement? maxLengthEnforcement;
 
   /// Called when the user changes the text in the field.
   final ValueChanged<String>? onChanged;
@@ -345,7 +351,7 @@ class _PinCodeTextFieldState extends State<PinCodeTextField> {
       minLines: widget.minLines,
       expands: widget.expands,
       maxLength: widget.maxLength,
-      maxLengthEnforced: widget.maxLengthEnforced,
+      maxLengthEnforcement: widget.maxLengthEnforcement,
       onChanged: widget.onChanged,
       onEditingComplete: widget.onEditingComplete,
       onSubmitted: widget.onSubmitted,
