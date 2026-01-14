@@ -17,7 +17,7 @@ void main() {
 
       // Verify the main button is displayed
       expect(find.text('My Pin Code Editor'), findsOneWidget);
-      expect(find.byType(FlatButton), findsOneWidget);
+      expect(find.byType(TextButton), findsOneWidget);
     });
 
     testWidgets('Navigate to PIN editor screen', (WidgetTester tester) async {

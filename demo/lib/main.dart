@@ -13,7 +13,7 @@ class Home extends StatelessWidget {
     return Scaffold(
       body: Container(
         child: Center(
-          child: FlatButton(
+          child: TextButton(
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => DemoPinCodeEditor()));
