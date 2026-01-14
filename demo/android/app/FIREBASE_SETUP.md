@@ -16,7 +16,7 @@ demo/android/app/google-services.json
 2. Select your project: **editable-pin**
 3. Go to Project Settings (gear icon)
 4. Under "Your apps", select your Android app (or add one if needed)
-   - Package name: `com.example.demo`
+   - Package name: `com.programiz.editablepin`
 5. Download the `google-services.json` file
 6. Place it in `demo/android/app/google-services.json`
 

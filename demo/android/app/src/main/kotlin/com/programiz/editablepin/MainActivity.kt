@@ -1,4 +1,4 @@
-package com.example.demo
+package com.programiz.editablepin
 
 import io.flutter.embedding.android.FlutterActivity
 
