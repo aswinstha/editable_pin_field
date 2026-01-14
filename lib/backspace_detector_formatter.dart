@@ -32,7 +32,7 @@ class BackspaceDetectorFormatter extends TextInputFormatter {
   final VoidCallback onBackspaceOnEmpty;
 
   @override
-  TextEditingValue formatEditingValue(
+  TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
